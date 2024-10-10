@@ -1,0 +1,30 @@
+<mat-drawer-container class="example-container" autosize>
+    <!-- SIDEBAR menu lateral -->
+    <mat-drawer #drawer class="example-sidenav" mode="side">
+      <p>Auto-resizing sidenav</p>
+      <button (click)="showFiller = !showFiller" mat-raised-button>
+        Toggle extra text
+      </button>
+      @if (showFiller) {
+        <p>Lorem, ipsum dolor sit amet consectetur.</p>
+      }
+      
+
+    </mat-drawer>
+  
+    <!-- AREA DERECHA contenido -->
+
+    <div class="example-sidenav-content">
+        <!-- TOOLBAR -->
+        <mat-toolbar class="g-3">
+            <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="drawer.toggle()">
+              <mat-icon>menu</mat-icon>
+            </button>
+            <mat-icon class="g-3">tv</mat-icon>
+            <span>Escuela de Cursos</span>
+
+        </mat-toolbar>
+
+        <app-usuarios />
+    </div>
+</mat-drawer-container>
