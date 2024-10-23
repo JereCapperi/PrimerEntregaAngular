@@ -12,6 +12,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
     AppComponent
   ],
   imports: [
+    AppModule,
     BrowserModule,
     AppRoutingModule,
     DashboardModule
