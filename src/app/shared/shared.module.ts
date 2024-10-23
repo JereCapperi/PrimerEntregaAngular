@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { UserfullnamePipe } from './pipes/userfullname.pipe';
 import { ResaltadoDirective } from './directivas/resaltado.directive';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { ResaltadoDirective } from './directivas/resaltado.directive';
     CommonModule
   ],
   exports: [
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,

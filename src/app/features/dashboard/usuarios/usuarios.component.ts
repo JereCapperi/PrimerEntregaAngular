@@ -1,76 +1,94 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UsuariosDialogComponent } from './usuarios-dialog/usuarios-dialog.component';
 import { Usuarios } from './models';
-
-
-
-const ELEMENT_DATA: Usuarios[] = [
-  {
-    id: 'hgs2k', 
-    firstname: 'Gonzalo', 
-    lastname: 'Fernandez', 
-    createdAt: new Date(),
-    email: 'gonzafernandez@gmail.com'
-  },
-  {
-    id: 'l3xct', 
-    firstname: 'Lionel', 
-    lastname: 'Gomez', 
-    createdAt: new Date(),
-    email: 'lionelgomez@gmail.com'
-  },
-  {
-    id: 'oie56', 
-    firstname: 'Esteban', 
-    lastname: 'Brown', 
-    createdAt: new Date(),
-    email: 'estebanquito@gmail.com'
-  },
-  {
-    id: 'hg93s', 
-    firstname: 'Sebastian', 
-    lastname: 'Boselli', 
-    createdAt: new Date(),
-    email: 'boselliseba78@gmail.com'
-  }
-];
-
+import { UsuariosService } from 'src/app/core/services/usuarios.service';
 
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
-  styleUrl: './usuarios.component.scss'
+  styleUrls: ['./usuarios.component.scss']
 })
-export class UsuariosComponent {
 
-
+export class UsuariosComponent implements OnInit {
   displayedColumns: string[] = ['id', 'name', 'email', 'createdAt', 'actions'];
-  dataSource = ELEMENT_DATA;
+  dataSource: Usuarios[] = [];
 
+  isLoading = false; 
 
+  constructor(private matDialog: MatDialog, private usuariosService: UsuariosService) {}
 
-  constructor(private matDialog: MatDialog) {}
+  ngOnInit(): void {
+    this.loadUsuarios();
+  }
 
-
-  openModal(): void {
-    this.matDialog.open(UsuariosDialogComponent)
-    .afterClosed()
-    .subscribe({
-      next: (result) => {
-        console.log('RECIBIMOS:', result);
-
-
-        if (!!result) {
-          this.dataSource = [
-            ...this.dataSource,
-            {
-              ...result,
-            }
-          ]
-        }
+  loadUsuarios(): void {
+    this.isLoading = true;
+    this.usuariosService.getUsuarios().subscribe({
+      next: (value) => {
+        this.dataSource = value;
       },
+      complete: () => {
+        this.isLoading = false;
+      }
     });
+  }
 
+  onDelete(id: string) {
+    if (confirm('¿Estás seguro?')) {
+      // this.dataSource = this.dataSource.filter((usuario) => usuario.id !== id);
+      this.isLoading = true;
+      this.usuariosService.removeUsuariosById(id).subscribe({
+        next: (usuarios) => {
+          this.dataSource = usuarios;
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      })
+    }
+
+
+  }
+
+  openModal(editingUser?: Usuarios): void {
+    this.matDialog
+      .open(UsuariosDialogComponent, {
+        data: {
+          editingUser
+        },
+      })
+      .afterClosed()
+      .subscribe({
+        next: (result) => {
+          console.log('RECIBIMOS:', result);
+
+          if (!!result) {
+            if (editingUser) {
+              this.handleUpdate(editingUser.id, result);
+            } else {
+              this.dataSource = [
+                ...this.dataSource,
+                {
+                  ...result,
+                }
+              ];
+            }
+          }
+        },
+      });
+  }
+
+
+  handleUpdate(id: string, update: Usuarios): void {
+    this.isLoading = true;
+    this.usuariosService.updateUsuarioById(id, update).subscribe({
+      next: (usuarios) => {
+        this.dataSource = usuarios;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 }
